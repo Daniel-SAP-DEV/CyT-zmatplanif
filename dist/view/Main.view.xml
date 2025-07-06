@@ -1,0 +1,236 @@
+<mvc:View
+    controllerName="com.cyt.materialmannager.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Page
+        id="page"
+        title="{i18n>title}"
+    >
+        <content>
+            <!-- Material Number Input Section -->
+            <Panel id="materialNumberPanel" headerText="Selección de Material" class="sapUiResponsiveMargin">
+                <content>
+                    <f:SimpleForm
+                        id="materialForm"
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="3"
+                        labelSpanL="3"
+                        labelSpanM="4"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="4"
+                        emptySpanL="4"
+                        emptySpanM="4"
+                        emptySpanS="0"
+                        columnsXL="1"
+                        columnsL="1"
+                        columnsM="1"
+                        singleContainerFullSize="false"
+                    >
+                        <f:content>
+                            <Label
+                                id="materialNumberLabel"
+                                text="Número de Material:"
+                            />
+                            <Input
+                                id="materialNumberInput"
+                                value=""
+                                placeholder="Ingrese el número de material"
+                                submit="onMaterialNumberSubmit"
+                            />
+                        </f:content>
+                    </f:SimpleForm>
+                    <Toolbar id="materialToolbar" class="sapUiMediumMarginTop">
+                        <Button
+                            id="searchMaterialButton"
+                            text="Buscar Material"
+                            type="Emphasized"
+                            press="onSearchMaterial"
+                        />
+                    </Toolbar>
+                </content>
+            </Panel>
+
+            <!-- Wine Data Form Section (Initially Hidden) -->
+            <Panel 
+                id="wineDataPanel" 
+                headerText="Datos del Material: {/materialNumber}" 
+                class="sapUiResponsiveMargin"
+                visible="false"
+            >
+                <content>
+                    <!-- Material Information Display -->
+                    <VBox id="materialInfoBox" class="sapUiMediumMarginBottom">
+                        <Text 
+                            id="materialInfoText" 
+                            text="Material: {/materialNumber} - {/materialDescription}"
+                            class="sapUiMediumMarginBegin sapUiSmallMarginTop"
+                        />
+                    </VBox>
+                    
+                    <f:SimpleForm
+                        id="wineDataForm"
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="3"
+                        labelSpanL="3"
+                        labelSpanM="3"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="4"
+                        emptySpanL="4"
+                        emptySpanM="4"
+                        emptySpanS="0"
+                        columnsXL="1"
+                        columnsL="1"
+                        columnsM="1"
+                        singleContainerFullSize="false"
+                    >
+                        <f:content>
+                            <Label
+                                id="wineQualityLabel"
+                                text="Calidad del vino:"
+                            />
+                            <Input
+                                id="wineQualityInput"
+                                value=""
+                                placeholder="Ingrese la calidad del vino"
+                            />
+
+                            <Label
+                                id="productiveClassificationLabel"
+                                text="Clasificación productiva:"
+                            />
+                            <Input
+                                id="productiveClassificationInput"
+                                value=""
+                                placeholder="Ingrese la clasificación productiva"
+                            />
+
+                            <Label
+                                id="programmerLabel"
+                                text="Programador:"
+                            />
+                            <Input
+                                id="programmerInput"
+                                value=""
+                                placeholder="Ingrese el programador"
+                            />
+
+                            <Label
+                                id="mainBrandLabel"
+                                text="Marca principal:"
+                            />
+                            <Input
+                                id="mainBrandInput"
+                                value=""
+                                placeholder="Ingrese la marca principal"
+                            />
+
+                            <Label
+                                id="baseWineEnologistLabel"
+                                text="Vino base - Enólogo:"
+                            />
+                            <Input
+                                id="baseWineEnologistInput"
+                                value=""
+                                placeholder="Ingrese el enólogo del vino base"
+                            />
+
+                            <Label
+                                id="baseWineComplexityLotLabel"
+                                text="Vino base - Complejidad + Lote:"
+                            />
+                            <Input
+                                id="baseWineComplexityLotInput"
+                                value=""
+                                placeholder="Ingrese complejidad y lote del vino base"
+                            />
+
+                            <Label
+                                id="baseWineSalesVolumeLabel"
+                                text="Vino base - Volumen de venta:"
+                            />
+                            <Input
+                                id="baseWineSalesVolumeInput"
+                                value=""
+                                type="Number"
+                                placeholder="Ingrese el volumen de venta"
+                            />
+
+                            <Label
+                                id="baseWineColorLabel"
+                                text="Vino base - Color:"
+                            />
+                            <ComboBox
+                                id="baseWineColorCombo"
+                                placeholder="Seleccione el color del vino"
+                            >
+                                <core:Item
+                                    id="tintoItem"
+                                    key="tinto"
+                                    text="Tinto"
+                                />
+                                <core:Item
+                                    id="blancoItem"
+                                    key="blanco"
+                                    text="Blanco"
+                                />
+                                <core:Item
+                                    id="rosadoItem"
+                                    key="rosado"
+                                    text="Rosado"
+                                />
+                                <core:Item
+                                    id="espumosoItem"
+                                    key="espumoso"
+                                    text="Espumoso"
+                                />
+                            </ComboBox>
+
+                            <Label
+                                id="baseWineIdVOELabel"
+                                text="Vino base - IdVOE:"
+                            />
+                            <Input
+                                id="baseWineIdVOEInput"
+                                value=""
+                                placeholder="Ingrese el IdVOE del vino base"
+                            />
+                        </f:content>
+                    </f:SimpleForm>
+                </content>
+            </Panel>
+        </content>
+        <footer>
+            <Toolbar
+                id="actionToolbar"
+                class="sapUiMediumMarginTop"
+                visible="{/showWineDataPanel}"
+            >
+                <ToolbarSpacer id="toolbarSpacer" />
+                <Button
+                    id="saveButton"
+                    text="Guardar"
+                    type="Emphasized"
+                    press="onSave"
+                />
+                <Button
+                    id="cancelButton"
+                    text="Cancelar"
+                    press="onCancel"
+                />
+                <Button
+                    id="newMaterialButton"
+                    text="Nuevo Material"
+                    press="onNewMaterial"
+                />
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>
