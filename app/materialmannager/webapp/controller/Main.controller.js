@@ -15,7 +15,10 @@ sap.ui.define([
                 var oViewModel = new JSONModel({
                     showWineDataPanel: false,
                     materialNumber: "",
-                    materialDescription: ""
+                    materialDescription: "",
+                    wineQuality: "",
+                    productiveClassification: "",
+                    baseWineEnologist: ""
                 });
                 this.getView().setModel(oViewModel);
             },
@@ -46,8 +49,14 @@ sap.ui.define([
                 // Simulate getting material description from a service
                 var sMaterialDescription = this._getMaterialDescription(sMaterialNumber);
                 
+                // Simulate getting system data for non-editable fields
+                var oSystemData = this._getSystemData(sMaterialNumber);
+                
                 oViewModel.setProperty("/materialNumber", sMaterialNumber);
                 oViewModel.setProperty("/materialDescription", sMaterialDescription);
+                oViewModel.setProperty("/wineQuality", oSystemData.wineQuality);
+                oViewModel.setProperty("/productiveClassification", oSystemData.productiveClassification);
+                oViewModel.setProperty("/baseWineEnologist", oSystemData.baseWineEnologist);
                 oViewModel.setProperty("/showWineDataPanel", true);
                 
                 // Hide the material selection panel
@@ -60,6 +69,44 @@ sap.ui.define([
                 this._clearWineData();
                 
                 MessageToast.show("Material " + sMaterialNumber + " encontrado. Complete los datos requeridos.");
+            },
+
+            _getSystemData: function (sMaterialNumber) {
+                // Simulate system data lookup for non-editable fields
+                // In a real application, this would call a service
+                var systemData = {
+                    "12345": {
+                        wineQuality: "Premium",
+                        productiveClassification: "Clase A - Exportación",
+                        baseWineEnologist: "Carlos Mendoza"
+                    },
+                    "67890": {
+                        wineQuality: "Estándar",
+                        productiveClassification: "Clase B - Mercado Nacional",
+                        baseWineEnologist: "Ana García"
+                    },
+                    "11111": {
+                        wineQuality: "Superior",
+                        productiveClassification: "Clase A - Premium",
+                        baseWineEnologist: "Roberto Silva"
+                    },
+                    "22222": {
+                        wineQuality: "Ultra Premium",
+                        productiveClassification: "Clase AA - Edición Limitada",
+                        baseWineEnologist: "María López"
+                    },
+                    "33333": {
+                        wineQuality: "Orgánico",
+                        productiveClassification: "Clase A - Certificado Orgánico",
+                        baseWineEnologist: "Diego Fernández"
+                    }
+                };
+                
+                return systemData[sMaterialNumber] || {
+                    wineQuality: "Estándar",
+                    productiveClassification: "Clase B - General",
+                    baseWineEnologist: "Enólogo Asignado"
+                };
             },
 
             _getMaterialDescription: function (sMaterialNumber) {
@@ -77,11 +124,9 @@ sap.ui.define([
             },
 
             _clearWineData: function () {
-                this.byId("wineQualityInput").setValue("");
-                this.byId("productiveClassificationInput").setValue("");
+                // Only clear editable fields (Input controls)
                 this.byId("programmerInput").setValue("");
                 this.byId("mainBrandInput").setValue("");
-                this.byId("baseWineEnologistInput").setValue("");
                 this.byId("baseWineComplexityLotInput").setValue("");
                 this.byId("baseWineSalesVolumeInput").setValue("");
                 this.byId("baseWineColorCombo").setSelectedKey("");
@@ -92,14 +137,16 @@ sap.ui.define([
                 var oViewModel = this.getView().getModel();
                 var sMaterialNumber = oViewModel.getProperty("/materialNumber");
 
-                // Get all input values
+                // Get all values (system + user input)
                 var wineData = {
                     materialNumber: sMaterialNumber,
-                    calidadVino: this.byId("wineQualityInput").getValue(),
-                    clasificacionProductiva: this.byId("productiveClassificationInput").getValue(),
+                    // System fields (non-editable)
+                    calidadVino: oViewModel.getProperty("/wineQuality"),
+                    clasificacionProductiva: oViewModel.getProperty("/productiveClassification"),
+                    vinoBaseEnologo: oViewModel.getProperty("/baseWineEnologist"),
+                    // User input fields (editable)
                     programador: this.byId("programmerInput").getValue(),
                     marcaPrincipal: this.byId("mainBrandInput").getValue(),
-                    vinoBaseEnologo: this.byId("baseWineEnologistInput").getValue(),
                     vinoBaseComplejidadLote: this.byId("baseWineComplexityLotInput").getValue(),
                     vinoBaseVolumenVenta: this.byId("baseWineSalesVolumeInput").getValue(),
                     vinoBaseColor: this.byId("baseWineColorCombo").getSelectedKey(),
@@ -118,8 +165,7 @@ sap.ui.define([
 
             _validateWineData: function (wineData) {
                 var aRequiredFields = [
-                    { field: "calidadVino", label: "Calidad del vino" },
-                    { field: "clasificacionProductiva", label: "Clasificación productiva" },
+                    // Only validate user input fields
                     { field: "programador", label: "Programador" },
                     { field: "marcaPrincipal", label: "Marca principal" }
                 ];
@@ -144,6 +190,10 @@ sap.ui.define([
                 var oViewModel = this.getView().getModel();
                 oViewModel.setProperty("/showWineDataPanel", false);
                 oViewModel.setProperty("/materialNumber", "");
+                oViewModel.setProperty("/materialDescription", "");
+                oViewModel.setProperty("/wineQuality", "");
+                oViewModel.setProperty("/productiveClassification", "");
+                oViewModel.setProperty("/baseWineEnologist", "");
                 
                 // Show the material selection panel again
                 this.byId("materialNumberPanel").setVisible(true);

@@ -12,7 +12,7 @@
     >
         <content>
             <!-- Material Number Input Section -->
-            <Panel id="materialNumberPanel" headerText="Selección de Material" class="sapUiResponsiveMargin">
+            <Panel id="materialNumberPanel" headerText="Selección de Material" >
                 <content>
                     <f:SimpleForm
                         id="materialForm"
@@ -60,19 +60,10 @@
             <Panel 
                 id="wineDataPanel" 
                 headerText="Datos del Material: {/materialNumber}" 
-                class="sapUiResponsiveMargin"
+                
                 visible="false"
             >
                 <content>
-                    <!-- Material Information Display -->
-                    <VBox id="materialInfoBox" class="sapUiMediumMarginBottom">
-                        <Text 
-                            id="materialInfoText" 
-                            text="Material: {/materialNumber} - {/materialDescription}"
-                            class="sapUiMediumMarginBegin sapUiSmallMarginTop"
-                        />
-                    </VBox>
-                    
                     <f:SimpleForm
                         id="wineDataForm"
                         editable="true"
@@ -93,23 +84,32 @@
                     >
                         <f:content>
                             <Label
+                                id="materialInfoLabel"
+                                text="Material:"
+                            />
+                            <Text 
+                                id="materialInfoText" 
+                                text="{/materialNumber} - {/materialDescription}"
+                            />
+
+                            <Label
                                 id="wineQualityLabel"
                                 text="Calidad del vino:"
                             />
-                            <Input
-                                id="wineQualityInput"
-                                value=""
-                                placeholder="Ingrese la calidad del vino"
+                            <Text
+                                id="wineQualityText"
+                                text="{/wineQuality}"
+                                
                             />
 
                             <Label
                                 id="productiveClassificationLabel"
                                 text="Clasificación productiva:"
                             />
-                            <Input
-                                id="productiveClassificationInput"
-                                value=""
-                                placeholder="Ingrese la clasificación productiva"
+                            <Text
+                                id="productiveClassificationText"
+                                text="{/productiveClassification}"
+                                
                             />
 
                             <Label
@@ -136,10 +136,10 @@
                                 id="baseWineEnologistLabel"
                                 text="Vino base - Enólogo:"
                             />
-                            <Input
-                                id="baseWineEnologistInput"
-                                value=""
-                                placeholder="Ingrese el enólogo del vino base"
+                            <Text
+                                id="baseWineEnologistText"
+                                text="{/baseWineEnologist}"
+                                
                             />
 
                             <Label
