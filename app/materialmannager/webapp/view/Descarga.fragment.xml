@@ -1,0 +1,61 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    xmlns:table="sap.ui.table"
+>
+    <Dialog
+        title="Descarga modelo Excel"
+        contentWidth="30rem"
+        draggable="true"
+    >
+        <buttons>
+            <Button
+                text="{i18n>Aceptar}"
+                press="onDescargaClose"
+                type="Emphasized"
+            />
+            <Button
+                text="{i18n>Cancelar}"
+                press="onDescargaClose"
+                type="Transparent"
+            />
+        </buttons>
+
+        <content>
+            <f:SimpleForm
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"
+                emptySpanS="0"
+                columnsXL="1"
+                columnsL="1"
+                columnsM="1"
+                singleContainerFullSize="false"
+            >
+                <f:content>
+                    <Label text="Tipo de material" />
+                    <ComboBox placeholder="Tipo de material">
+                        <core:Item
+                            key="ROH"
+                            text="ROH"
+                        />
+                        <core:Item
+                            key="FERT"
+                            text="FERT"
+                        />
+                    </ComboBox>
+                </f:content>
+            </f:SimpleForm>
+
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

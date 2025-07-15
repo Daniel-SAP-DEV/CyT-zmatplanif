@@ -12,16 +12,30 @@
     </style>
     <script
         id="sap-ui-bootstrap"
-        src="https://sapui5.hana.ondemand.com/1.136.2/resources/sap-ui-core.js"
+        src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
         data-sap-ui-theme="sap_horizon"
         data-sap-ui-resourceroots='{
             "com.cyt.materialmannager": "./"
         }'
-        data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
         data-sap-ui-compatVersion="edge"
         data-sap-ui-async="true"
         data-sap-ui-frameOptions="trusted"
     ></script>
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            // Initialize mock server first
+            sap.ui.require([
+                "com/cyt/materialmannager/localService/mockserver"
+            ], function(mockserver) {
+                mockserver.init();
+                
+                // Then load the component
+                sap.ui.require([
+                    "sap/ui/core/ComponentSupport"
+                ]);
+            });
+        });
+    </script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
     <div

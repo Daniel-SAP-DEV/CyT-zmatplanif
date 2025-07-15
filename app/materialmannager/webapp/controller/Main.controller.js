@@ -1,74 +1,69 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "com/cyt/materialmannager/controller/BaseController",
     "sap/m/MessageToast",
-    "sap/ui/model/json/JSONModel"
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/Fragment"
 ],
-    /**
-     * @param {typeof sap.ui.core.mvc.Controller} Controller
-     */
-    function (Controller, MessageToast, JSONModel) {
+    function (
+        BaseController,
+        MessageToast,
+        JSONModel,
+        Fragment
+    ) {
         "use strict";
 
-        return Controller.extend("com.cyt.materialmannager.controller.Main", {
+        return BaseController.extend("com.cyt.materialmannager.controller.Main", {
+
             onInit: function () {
-                // Initialize view model
-                var oViewModel = new JSONModel({
-                    showWineDataPanel: false,
-                    materialNumber: "",
-                    materialDescription: "",
-                    wineQuality: "",
-                    productiveClassification: "",
-                    baseWineEnologist: ""
-                });
-                this.getView().setModel(oViewModel);
+                let oCAPModel = this.getOwnerComponent().getModel('CAP')
+                this.getView().byId('SmartTable').getTable().setMode(sap.m.ListMode.MultiSelect)
+                this.getView().byId('SmartTable').setModel(oCAPModel)
+                this.getView().byId('SmartFilter').setModel(oCAPModel)
+
             },
 
-            onSearchMaterial: function () {
-                var sMaterialNumber = this.byId("materialNumberInput").getValue();
-                
-                if (!sMaterialNumber || sMaterialNumber.trim() === "") {
-                    MessageToast.show("Por favor ingrese un número de material válido");
-                    return;
+            getSeletedData() {
+                let oSmartTable = this.getView().byId('SmartTable')
+                let oModel = oSmartTable.getModel()
+                let oTable = oSmartTable.getTable()
+                let sTableType = oTable.getMetadata().getName()
+                if (sTableType === 'sap.m.Table') {
+                    return oTable.getSelectedItems().map(selectedItem => {
+                        return oTable.getModel().getProperty(selectedItem.getBindingContextPath())
+                    })
+                } else {
+                    let aSelectedIndices = oSmartTable.getTable().getSelectedIndices()
+                    let aSelectedData = aSelectedIndices.map((i) => {
+                        let oContent = oSmartTable.getCellSelectorPluginOwner().getContextByIndex(i)
+                        return oModel.getProperty(oContent.sPath)
+                    })
+                    return aSelectedData
                 }
-
-                // Simulate material search/validation
-                this._searchMaterial(sMaterialNumber.trim());
             },
 
-            onMaterialNumberSubmit: function () {
-                // Trigger search when Enter is pressed
-                this.onSearchMaterial();
-            },
+            
 
-            _searchMaterial: function (sMaterialNumber) {
-                // Here you would typically call a service to validate the material
-                // For now, we'll simulate a successful search with material description
-                
-                var oViewModel = this.getView().getModel();
-                
-                // Simulate getting material description from a service
-                var sMaterialDescription = this._getMaterialDescription(sMaterialNumber);
-                
-                // Simulate getting system data for non-editable fields
-                var oSystemData = this._getSystemData(sMaterialNumber);
-                
-                oViewModel.setProperty("/materialNumber", sMaterialNumber);
-                oViewModel.setProperty("/materialDescription", sMaterialDescription);
-                oViewModel.setProperty("/wineQuality", oSystemData.wineQuality);
-                oViewModel.setProperty("/productiveClassification", oSystemData.productiveClassification);
-                oViewModel.setProperty("/baseWineEnologist", oSystemData.baseWineEnologist);
-                oViewModel.setProperty("/showWineDataPanel", true);
-                
-                // Hide the material selection panel
-                this.byId("materialNumberPanel").setVisible(false);
-                
-                // Show the wine data panel
-                this.byId("wineDataPanel").setVisible(true);
-                
-                // Clear any previous wine data
-                this._clearWineData();
-                
-                MessageToast.show("Material " + sMaterialNumber + " encontrado. Complete los datos requeridos.");
+            onEdit: async function (oEvent) {
+                let aSelectedData = this.getSeletedData()
+                if (!aSelectedData?.length) {
+                    sap.m.MessageToast.show('Seleccione al menos un elemento para editar')
+                    return false
+                }
+                let oDialog = await this.getEditDialog()
+                oDialog.open()
+
+                this.set("/multipleSelection", (aSelectedData?.length > 1));
+
+
+                var oSystemData = this._getSystemData(aSelectedData[0].material);
+                this.set("/materialNumber", aSelectedData[0].material);
+                this.set("/materialDescription", aSelectedData[0].description);
+                this.set("/wineQuality", oSystemData.wineQuality);
+                this.set("/productiveClassification", oSystemData.productiveClassification);
+                this.set("/baseWineEnologist", oSystemData.baseWineEnologist);
+                this.set("/showWineDataPanel", true);
+
+
             },
 
             _getSystemData: function (sMaterialNumber) {
@@ -101,7 +96,7 @@ sap.ui.define([
                         baseWineEnologist: "Diego Fernández"
                     }
                 };
-                
+
                 return systemData[sMaterialNumber] || {
                     wineQuality: "Estándar",
                     productiveClassification: "Clase B - General",
@@ -109,103 +104,63 @@ sap.ui.define([
                 };
             },
 
-            _getMaterialDescription: function (sMaterialNumber) {
-                // Simulate material description lookup
-                // In a real application, this would call a service
-                var descriptions = {
-                    "12345": "Vino Tinto Reserva Premium",
-                    "67890": "Vino Blanco Sauvignon Blanc",
-                    "11111": "Vino Rosé Cabernet Franc",
-                    "22222": "Vino Espumoso Método Tradicional",
-                    "33333": "Vino Tinto Malbec Orgánico"
-                };
-                
-                return descriptions[sMaterialNumber] || "Descripción del material " + sMaterialNumber;
-            },
+            getEditDialog: function () {
+                if (!this._pEditDialog) {
+                    let oView = this.getView()
+                    this._pEditDialog = Fragment.load({
+                        id: oView.getId(),
+                        name: this._getName() + ".view.Edit",
+                        controller: this
+                    }).then(function (oDialog) {
+                        oView.addDependent(oDialog);
+                        oDialog.attachAfterClose((oEvent) => {
+                            oEvent.getSource().destroy();
+                            this._pEditDialog = null;
+                        });
 
-            _clearWineData: function () {
-                // Only clear editable fields (Input controls)
-                this.byId("programmerInput").setValue("");
-                this.byId("mainBrandInput").setValue("");
-                this.byId("baseWineComplexityLotInput").setValue("");
-                this.byId("baseWineSalesVolumeInput").setValue("");
-                this.byId("baseWineColorCombo").setSelectedKey("");
-                this.byId("baseWineIdVOEInput").setValue("");
-            },
-
-            onSave: function () {
-                var oViewModel = this.getView().getModel();
-                var sMaterialNumber = oViewModel.getProperty("/materialNumber");
-
-                // Get all values (system + user input)
-                var wineData = {
-                    materialNumber: sMaterialNumber,
-                    // System fields (non-editable)
-                    calidadVino: oViewModel.getProperty("/wineQuality"),
-                    clasificacionProductiva: oViewModel.getProperty("/productiveClassification"),
-                    vinoBaseEnologo: oViewModel.getProperty("/baseWineEnologist"),
-                    // User input fields (editable)
-                    programador: this.byId("programmerInput").getValue(),
-                    marcaPrincipal: this.byId("mainBrandInput").getValue(),
-                    vinoBaseComplejidadLote: this.byId("baseWineComplexityLotInput").getValue(),
-                    vinoBaseVolumenVenta: this.byId("baseWineSalesVolumeInput").getValue(),
-                    vinoBaseColor: this.byId("baseWineColorCombo").getSelectedKey(),
-                    vinoBaseIdVOE: this.byId("baseWineIdVOEInput").getValue()
-                };
-
-                // Validate required fields
-                if (!this._validateWineData(wineData)) {
-                    return;
+                        return oDialog;
+                    }.bind(this));
                 }
-
-                // Here you would typically send the data to a service
-                console.log("Wine data to save:", wineData);
-                MessageToast.show("Datos del material " + sMaterialNumber + " guardados correctamente");
+                return this._pEditDialog
             },
 
-            _validateWineData: function (wineData) {
-                var aRequiredFields = [
-                    // Only validate user input fields
-                    { field: "programador", label: "Programador" },
-                    { field: "marcaPrincipal", label: "Marca principal" }
-                ];
+            onEditClose: async function (params) {
+                let oDialog = await this.getEditDialog()
+                oDialog.close()
+            },
 
-                for (var i = 0; i < aRequiredFields.length; i++) {
-                    if (!wineData[aRequiredFields[i].field] || wineData[aRequiredFields[i].field].trim() === "") {
-                        MessageToast.show("El campo '" + aRequiredFields[i].label + "' es obligatorio");
-                        return false;
-                    }
+
+
+            getDescargaDialog: function () {
+                if (!this._pDescargaDialog) {
+                    let oView = this.getView()
+                    this._pDescargaDialog = Fragment.load({
+                        id: oView.getId(),
+                        name: this._getName() + ".view.Descarga",
+                        controller: this
+                    }).then(function (oDialog) {
+                        oView.addDependent(oDialog);
+                        oDialog.attachAfterClose((oEvent) => {
+                            oEvent.getSource().destroy();
+                            this._pDescargaDialog = null;
+                        });
+
+                        return oDialog;
+                    }.bind(this));
                 }
-                return true;
+                return this._pDescargaDialog
             },
 
-            onCancel: function () {
-                // Clear wine data
-                this._clearWineData();
-                MessageToast.show("Datos cancelados");
+            onDescargaClose: async function (params) {
+                let oDialog = await this.getDescargaDialog()
+                oDialog.close()
             },
 
-            onNewMaterial: function () {
-                // Reset everything to start with a new material
-                var oViewModel = this.getView().getModel();
-                oViewModel.setProperty("/showWineDataPanel", false);
-                oViewModel.setProperty("/materialNumber", "");
-                oViewModel.setProperty("/materialDescription", "");
-                oViewModel.setProperty("/wineQuality", "");
-                oViewModel.setProperty("/productiveClassification", "");
-                oViewModel.setProperty("/baseWineEnologist", "");
-                
-                // Show the material selection panel again
-                this.byId("materialNumberPanel").setVisible(true);
-                
-                // Hide the wine data panel
-                this.byId("wineDataPanel").setVisible(false);
-                
-                // Clear the material input and wine data
-                this.byId("materialNumberInput").setValue("");
-                this._clearWineData();
-                
-                MessageToast.show("Listo para buscar nuevo material");
+            onDescarga: async function(){
+                let oDialog = await this.getDescargaDialog()
+                oDialog.open();
             }
+
+
         });
     });

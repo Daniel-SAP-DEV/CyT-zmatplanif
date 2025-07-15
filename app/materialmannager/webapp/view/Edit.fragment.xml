@@ -1,0 +1,202 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    xmlns:table="sap.ui.table"
+>
+    <Dialog
+        title="Editor características"
+        contentWidth="30rem"
+        draggable="true"
+    >
+        <buttons>
+            <Button
+                text="{i18n>Aceptar}"
+                press="onEditClose"
+                type="Emphasized"
+            />
+            <Button
+                text="{i18n>Cancelar}"
+                press="onEditClose"
+                type="Transparent"
+            />
+        </buttons>
+
+        <content>
+            <f:SimpleForm
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"
+                emptySpanS="0"
+                columnsXL="1"
+                columnsL="1"
+                columnsM="1"
+                singleContainerFullSize="false"
+                visible="{= !!${/multipleSelection} }"
+            >
+                <f:content>
+                    <Label />
+                    <VBox>
+                        <CheckBox text="Programador" />
+                        <Input
+                            value=""
+                            placeholder="Ingrese el programador"
+                        />
+                    </VBox>
+
+                    <Label />
+                    <VBox>
+                        <CheckBox text="Marca principal" />
+                        <Input
+                            value=""
+                            placeholder="Ingrese la marca principal"
+                        />
+                    </VBox>
+
+                    <Label />
+                    <VBox>
+                        <CheckBox text="Vino base - Complejidad + Lote" />
+                        <Input
+                            value=""
+                            placeholder="Ingrese complejidad y lote del vino base"
+                        />
+                    </VBox>
+
+                    <Label />
+                    <VBox>
+                        <CheckBox text="Vino base - Volumen de venta" />
+                        <Input
+                            value=""
+                            type="Number"
+                            placeholder="Ingrese el volumen de venta"
+                        />
+                    </VBox>
+
+                    <Label />
+                    <VBox>
+                        <CheckBox text="Vino base - Color" />
+                        <ComboBox placeholder="Seleccione el color del vino">
+                            <core:Item
+                                key="tinto"
+                                text="Tinto"
+                            />
+                            <core:Item
+                                key="blanco"
+                                text="Blanco"
+                            />
+                            <core:Item
+                                key="rosado"
+                                text="Rosado"
+                            />
+                            <core:Item
+                                key="espumoso"
+                                text="Espumoso"
+                            />
+                        </ComboBox>
+                    </VBox>
+
+                    <Label />
+                    <VBox>
+                        <CheckBox text="Vino base - IdVOE" />
+                        <Input
+                            value=""
+                            placeholder="Ingrese el IdVOE del vino base"
+                        />
+                    </VBox>
+                </f:content>
+            </f:SimpleForm>
+
+            <f:SimpleForm
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"
+                emptySpanS="0"
+                columnsXL="1"
+                columnsL="1"
+                columnsM="1"
+                singleContainerFullSize="false"
+                visible="{= !${/multipleSelection} }"
+            >
+                <f:content>
+                    <Label text="Material" />
+                    <Text text="{/materialNumber} - {/materialDescription}" />
+
+                    <Label text="Calidad del vino" />
+                    <Text text="{/wineQuality}" />
+
+                    <Label text="Vino base - Enólogo" />
+                    <Text text="{/baseWineEnologist}" />
+
+                    <Label text="Clasificación productiva" />
+                    <Text text="{/productiveClassification}" />
+
+                    <Label text="Programador" />
+                    <Input
+                        value=""
+                        placeholder="Ingrese el programador"
+                    />
+
+                    <Label text="Marca principal" />
+                    <Input
+                        value=""
+                        placeholder="Ingrese la marca principal"
+                    />
+
+                    <Label text="Vino base - Complejidad + Lote" />
+                    <Input
+                        value=""
+                        placeholder="Ingrese complejidad y lote del vino base"
+                    />
+
+                    <Label text="Vino base - Volumen de venta" />
+                    <Input
+                        value=""
+                        type="Number"
+                        placeholder="Ingrese el volumen de venta"
+                    />
+
+                    <Label text="Vino base - Color" />
+                    <ComboBox placeholder="Seleccione el color del vino">
+                        <core:Item
+                            key="tinto"
+                            text="Tinto"
+                        />
+                        <core:Item
+                            key="blanco"
+                            text="Blanco"
+                        />
+                        <core:Item
+                            key="rosado"
+                            text="Rosado"
+                        />
+                        <core:Item
+                            key="espumoso"
+                            text="Espumoso"
+                        />
+                    </ComboBox>
+
+                    <Label text="Vino base - IdVOE" />
+                    <Input
+                        value=""
+                        placeholder="Ingrese el IdVOE del vino base"
+                    />
+                </f:content>
+            </f:SimpleForm>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

@@ -9,7 +9,11 @@
     ],
     "main": "webapp/index.html",
     "scripts": {
+        "start": "node server.js",
+        "start-standalone": "node server.js",
         "deploy-config": "npx -p @sap/ux-ui5-tooling fiori add deploy-config cf"
     },
-    "devDependencies": { }
+    "devDependencies": {
+        "express": "^4.18.2"
+    }
 }

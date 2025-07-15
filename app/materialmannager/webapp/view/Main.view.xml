@@ -3,234 +3,102 @@
     xmlns:mvc="sap.ui.core.mvc"
     displayBlock="true"
     xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form"
+    xmlns:f="sap.f"
     xmlns:core="sap.ui.core"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
-    <Page
-        id="page"
-        title="{i18n>title}"
+    <f:DynamicPage
+        toggleHeaderOnTitleClick="false"
+        headerPinned="true"
     >
-        <content>
-            <!-- Material Number Input Section -->
-            <Panel id="materialNumberPanel" headerText="Selección de Material" >
-                <content>
-                    <f:SimpleForm
-                        id="materialForm"
-                        editable="true"
-                        layout="ResponsiveGridLayout"
-                        labelSpanXL="3"
-                        labelSpanL="3"
-                        labelSpanM="4"
-                        labelSpanS="12"
-                        adjustLabelSpan="false"
-                        emptySpanXL="4"
-                        emptySpanL="4"
-                        emptySpanM="4"
-                        emptySpanS="0"
-                        columnsXL="1"
-                        columnsL="1"
-                        columnsM="1"
-                        singleContainerFullSize="false"
-                    >
-                        <f:content>
-                            <Label
-                                id="materialNumberLabel"
-                                text="Número de Material:"
-                            />
-                            <Input
-                                id="materialNumberInput"
-                                value=""
-                                placeholder="Ingrese el número de material"
-                                submit="onMaterialNumberSubmit"
-                            />
-                        </f:content>
-                    </f:SimpleForm>
-                    <Toolbar id="materialToolbar" class="sapUiMediumMarginTop">
-                        <Button
-                            id="searchMaterialButton"
-                            text="Buscar Material"
-                            type="Emphasized"
-                            press="onSearchMaterial"
+        <f:header>
+            <f:DynamicPageHeader>
+                <smartFilterBar:SmartFilterBar
+                    id="SmartFilter"
+                    entitySet="Material"
+                    persistencyKey="SmartFilters"
+                    basicSearchFieldName="changeControl,changeControlDescription,changeControlLifeCicle,owner"
+                    enableBasicSearch="true"
+                    liveMode="true"
+                >
+                    <smartFilterBar:layoutData>
+                        <FlexItemData shrinkFactor="0" />
+                    </smartFilterBar:layoutData>
+                </smartFilterBar:SmartFilterBar>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
+            <VBox fitContainer="true">
+                <smartTable:SmartTable
+                    customizeConfig="{
+                        'autoColumnWidth': {
+                            'status': {'min': 5, 'max': 7, 'gap': 2, 'truncateLabel': false},
+                            'owner': {'min': 5, 'max': 7, 'gap': 2, 'truncateLabel': false}
+                        }
+                    }"
+                    id="SmartTable"
+                    entitySet="Material"
+                    smartFilterId="SmartFilter"
+                    tableType="ResponsiveTable"
+                    enableExport="true"
+                    beforeExport="onBeforeExport"
+                    useVariantManagement="true"
+                    useTablePersonalisation="true"
+                    header="{i18n>Restrictions}"
+                    showRowCount="true"
+                    persistencyKey="SmartTable"
+                    enableAutoBinding="true"
+                    enableAutoColumnWidth="true"
+                    editTogglable="false"
+                    app:useSmartToggle="true"
+                    editable="false"
+                    enableCopy="false"
+                >
+                    <smartTable:layoutData>
+                        <FlexItemData
+                            growFactor="1"
+                            baseSize="0%"
                         />
-                    </Toolbar>
-                </content>
-            </Panel>
+                    </smartTable:layoutData>
 
-            <!-- Wine Data Form Section (Initially Hidden) -->
-            <Panel 
-                id="wineDataPanel" 
-                headerText="Datos del Material: {/materialNumber}" 
-                
-                visible="false"
-            >
-                <content>
-                    <f:SimpleForm
-                        id="wineDataForm"
-                        editable="true"
-                        layout="ResponsiveGridLayout"
-                        labelSpanXL="3"
-                        labelSpanL="3"
-                        labelSpanM="3"
-                        labelSpanS="12"
-                        adjustLabelSpan="false"
-                        emptySpanXL="4"
-                        emptySpanL="4"
-                        emptySpanM="4"
-                        emptySpanS="0"
-                        columnsXL="1"
-                        columnsL="1"
-                        columnsM="1"
-                        singleContainerFullSize="false"
-                    >
-                        <f:content>
-                            <Label
-                                id="materialInfoLabel"
-                                text="Material:"
-                            />
-                            <Text 
-                                id="materialInfoText" 
-                                text="{/materialNumber} - {/materialDescription}"
+                    <smartTable:customToolbar>
+                        <OverflowToolbar design="Transparent">
+                            <ToolbarSpacer />
+
+                            <Button
+                                text="{i18n>Editar}"
+                                press=".onEdit"
+                                icon="sap-icon://edit"
+                                type="Transparent"
                             />
 
-                            <Label
-                                id="wineQualityLabel"
-                                text="Calidad del vino:"
-                            />
-                            <Text
-                                id="wineQualityText"
-                                text="{/wineQuality}"
-                                
-                            />
-
-                            <Label
-                                id="productiveClassificationLabel"
-                                text="Clasificación productiva:"
-                            />
-                            <Text
-                                id="productiveClassificationText"
-                                text="{/productiveClassification}"
-                                
-                            />
-
-                            <Label
-                                id="programmerLabel"
-                                text="Programador:"
-                            />
-                            <Input
-                                id="programmerInput"
-                                value=""
-                                placeholder="Ingrese el programador"
-                            />
-
-                            <Label
-                                id="mainBrandLabel"
-                                text="Marca principal:"
-                            />
-                            <Input
-                                id="mainBrandInput"
-                                value=""
-                                placeholder="Ingrese la marca principal"
-                            />
-
-                            <Label
-                                id="baseWineEnologistLabel"
-                                text="Vino base - Enólogo:"
-                            />
-                            <Text
-                                id="baseWineEnologistText"
-                                text="{/baseWineEnologist}"
-                                
-                            />
-
-                            <Label
-                                id="baseWineComplexityLotLabel"
-                                text="Vino base - Complejidad + Lote:"
-                            />
-                            <Input
-                                id="baseWineComplexityLotInput"
-                                value=""
-                                placeholder="Ingrese complejidad y lote del vino base"
-                            />
-
-                            <Label
-                                id="baseWineSalesVolumeLabel"
-                                text="Vino base - Volumen de venta:"
-                            />
-                            <Input
-                                id="baseWineSalesVolumeInput"
-                                value=""
-                                type="Number"
-                                placeholder="Ingrese el volumen de venta"
-                            />
-
-                            <Label
-                                id="baseWineColorLabel"
-                                text="Vino base - Color:"
-                            />
-                            <ComboBox
-                                id="baseWineColorCombo"
-                                placeholder="Seleccione el color del vino"
+                            <MenuButton
+                                text="Carga Masiva"
+                                icon="sap-icon://excel-attachment"
                             >
-                                <core:Item
-                                    id="tintoItem"
-                                    key="tinto"
-                                    text="Tinto"
-                                />
-                                <core:Item
-                                    id="blancoItem"
-                                    key="blanco"
-                                    text="Blanco"
-                                />
-                                <core:Item
-                                    id="rosadoItem"
-                                    key="rosado"
-                                    text="Rosado"
-                                />
-                                <core:Item
-                                    id="espumosoItem"
-                                    key="espumoso"
-                                    text="Espumoso"
-                                />
-                            </ComboBox>
+                                <menu>
+                                    <Menu itemSelected="onMenuAction">
+                                        <MenuItem
+                                            text="Descargar Plantilla"
+                                            icon="sap-icon://download"
+                                            press="onDescarga"
+                                        />
+                                        <MenuItem
+                                            text="Cargar Planilla"
+                                            icon="sap-icon://upload"
+                                        />
+                                    </Menu>
+                                </menu>
+                            </MenuButton>
 
-                            <Label
-                                id="baseWineIdVOELabel"
-                                text="Vino base - IdVOE:"
-                            />
-                            <Input
-                                id="baseWineIdVOEInput"
-                                value=""
-                                placeholder="Ingrese el IdVOE del vino base"
-                            />
-                        </f:content>
-                    </f:SimpleForm>
-                </content>
-            </Panel>
-        </content>
-        <footer>
-            <Toolbar
-                id="actionToolbar"
-                class="sapUiMediumMarginTop"
-                visible="{/showWineDataPanel}"
-            >
-                <ToolbarSpacer id="toolbarSpacer" />
-                <Button
-                    id="saveButton"
-                    text="Guardar"
-                    type="Emphasized"
-                    press="onSave"
-                />
-                <Button
-                    id="cancelButton"
-                    text="Cancelar"
-                    press="onCancel"
-                />
-                <Button
-                    id="newMaterialButton"
-                    text="Nuevo Material"
-                    press="onNewMaterial"
-                />
-            </Toolbar>
-        </footer>
-    </Page>
+
+                        </OverflowToolbar>
+                    </smartTable:customToolbar>
+                </smartTable:SmartTable>
+            </VBox>
+        </f:content>
+    </f:DynamicPage>
 </mvc:View>

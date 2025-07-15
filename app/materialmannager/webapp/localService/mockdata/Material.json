@@ -1,0 +1,32 @@
+[
+  {
+    "material": "12345",
+    "description": "Vino Tinto Reserva Premium",
+    "tipo": "ROH",
+    "grupo": "Grupo A"
+  },
+  {
+    "material": "67890",
+    "description": "Vino Blanco Sauvignon Blanc",
+    "tipo": "ROH",
+    "grupo": "Grupo A"
+  },
+  {
+    "material": "11111",
+    "description": "Vino Rosé Cabernet Franc",
+    "tipo": "ROH",
+    "grupo": "Grupo B"
+  },
+  {
+    "material": "22222",
+    "description": "Vino Espumoso Método Tradicional",
+    "tipo": "FERT",
+    "grupo": "Grupo B"
+  },
+  {
+    "material": "33333",
+    "description": "Vino Tinto Malbec Orgánico",
+    "tipo": "FERT",
+    "grupo": "Grupo B"
+  }
+]
